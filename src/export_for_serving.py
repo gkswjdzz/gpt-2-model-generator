@@ -17,6 +17,7 @@ def export_for_serving(
     length=None,
     temperature=1,
     top_k=0,
+    top_p=0.9,
     models_dir='models'
 ):
     """
@@ -57,7 +58,7 @@ def export_for_serving(
             hparams=hparams, length=length,
             context=context,
             batch_size=batch_size,
-            temperature=temperature, top_k=top_k
+            temperature=temperature, top_k=top_k, top_p=top_p
         )
 
         saver = tf.train.Saver()
@@ -69,8 +70,13 @@ def export_for_serving(
 #            os.makedirs(export_dir)
 
         builder = tf.saved_model.builder.SavedModelBuilder(export_dir)
-        signature = predict_signature_def(inputs={'context': context},
-        outputs={'sample': output})
+        signature = predict_signature_def(
+            inputs={
+                'context': context
+            },
+            outputs={
+                'sample': output
+            })
 
         builder.add_meta_graph_and_variables(sess,
                                      [tf.saved_model.tag_constants.SERVING],

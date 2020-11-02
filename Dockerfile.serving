@@ -1,0 +1,7 @@
+FROM tensorflow/serving:1.12.3-gpu
+
+ENV MODEL_NAME=saved_model
+
+COPY saved_model.tar .
+RUN mkdir -p /models/${MODEL_NAME}/1
+RUN tar -xvf saved_model.tar -C /models/${MODEL_NAME}/1

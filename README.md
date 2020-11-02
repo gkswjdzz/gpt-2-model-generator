@@ -12,9 +12,28 @@ We have also [released a dataset](https://github.com/openai/gpt-2-output-dataset
 
 ## Usage
 
-This repository is meant to be a starting point for researchers and engineers to experiment with GPT-2.
+Build docker images per model.
+```bash
+$ docker build -t gpt-2-124m -f Dockerfile.124M.gpu .
+$ docker build -t gpt-2-335m -f Dockerfile.335m.gpu .
+$ docker build -t gpt-2-774m -f Dockerfile.774m.gpu .
+$ docker build -t gpt-2-1558m -f Dockerfile.1558m.gpu .
+```
 
-For basic information, see our [model card](./model_card.md).
+Run gen.sh for generating model
+```bash
+$ MODEL_NAME=124M LENGTH=1 bash gen.sh
+```
+
+Generate TF Serving Docker image.
+```bash
+$ cd export/<YOUR_MODEL>/
+$ tar -cvf ../../saved_model.tar .
+$ cd ../../
+$ docker build -t gpt-2-tf-serving .
+```
+
+saved_model will generate in export folder.
 
 ### Some caveats
 
