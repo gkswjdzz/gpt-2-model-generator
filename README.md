@@ -15,25 +15,29 @@ We have also [released a dataset](https://github.com/openai/gpt-2-output-dataset
 Build docker images per model.
 ```bash
 $ docker build -t gpt-2-124m -f Dockerfile.124M.gpu .
-$ docker build -t gpt-2-335m -f Dockerfile.335m.gpu .
-$ docker build -t gpt-2-774m -f Dockerfile.774m.gpu .
-$ docker build -t gpt-2-1558m -f Dockerfile.1558m.gpu .
+$ docker build -t gpt-2-335m -f Dockerfile.335M.gpu .
+$ docker build -t gpt-2-774m -f Dockerfile.774M.gpu .
+$ docker build -t gpt-2-1558m -f Dockerfile.1558M.gpu .
 ```
 
 Run gen.sh for generating model
 ```bash
-$ MODEL_NAME=124M LENGTH=1 bash gen.sh
+$ MODEL_NAME=774M LENGTH=1 bash model-gen.sh
 ```
+saved_model will generate in export folder.
 
 Generate TF Serving Docker image.
 ```bash
 $ cd export/<YOUR_MODEL>/
 $ tar -cvf ../../saved_model.tar .
 $ cd ../../
-$ docker build -t gpt-2-tf-serving .
+$ docker build -t gpt-2-tf-serving -f Dockerfile.serving .
 ```
 
-saved_model will generate in export folder.
+Run tensorflow serving
+```bash
+$ docker run --gpus 1 -p 8500-8501:8500-8501 -it gpt-2-tf-serving --rest_api_timeout_in_ms=10000
+```
 
 ### Some caveats
 
