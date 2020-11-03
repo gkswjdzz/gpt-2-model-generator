@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [[ -z "${MODEL_NAME}" ]]; then
-  echo "MODEL_NAME is not optional. (124M, 335M, 774M, 1558M)"
+  echo "MODEL_NAME is not optional. (124M, 355M, 774M, 1558M)"
   exit 1
 fi
 

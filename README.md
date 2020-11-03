@@ -15,7 +15,7 @@ We have also [released a dataset](https://github.com/openai/gpt-2-output-dataset
 Build docker images per model.
 ```bash
 $ docker build -t gpt-2-124m -f Dockerfile.124M.gpu .
-$ docker build -t gpt-2-335m -f Dockerfile.335M.gpu .
+$ docker build -t gpt-2-355m -f Dockerfile.355M.gpu .
 $ docker build -t gpt-2-774m -f Dockerfile.774M.gpu .
 $ docker build -t gpt-2-1558m -f Dockerfile.1558M.gpu .
 ```
