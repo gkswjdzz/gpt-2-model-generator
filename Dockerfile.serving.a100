@@ -1,0 +1,17 @@
+FROM tensorflow/serving:2.3.0-gpu
+
+ENV MODEL_NAME=saved_model
+
+# COPY saved_model.tar .
+# RUN mkdir -p /models/${MODEL_NAME}/1
+# RUN tar -xvf saved_model.tar -C /models/${MODEL_NAME}/1
+
+COPY 1604376293/* /models/saved_model/1/
+
+RUN apt update
+RUN apt install -y python3-dev python3-pip git
+RUN pip3 install --upgrade pip setuptools requests
+
+# RUN pip install --user nvidia-pyindex
+# RUN pip install --user nvidia-tensorflow[horovod]
+# RUN pip list | grep nvidia
