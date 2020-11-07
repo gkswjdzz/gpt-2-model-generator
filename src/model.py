@@ -1,15 +1,18 @@
 import numpy as np
 import tensorflow as tf
-from tensorflow.contrib.training import HParams
+if tf.__version__ > '2':
+    import tensorflow.compat.v1 as tf
+
+# from tensorflow.contrib.training import HParams
 
 def default_hparams():
-    return HParams(
-        n_vocab=0,
-        n_ctx=1024,
-        n_embd=768,
-        n_head=12,
-        n_layer=12,
-    )
+    return {
+        'n_vocab': 0,
+        'n_ctx': 1024,
+        'n_embd': 768,
+        'n_head': 12,
+        'n_layer': 12,
+    }
 
 def shape_list(x):
     """Deal with dynamic shape in tensorflow cleanly."""
@@ -28,7 +31,7 @@ def gelu(x):
 def norm(x, scope, *, axis=-1, epsilon=1e-5):
     """Normalize to mean = 0, std = 1, then do a diagonal affine transform."""
     with tf.variable_scope(scope):
-        n_state = x.shape[-1].value
+        n_state = x.shape[-1]
         g = tf.get_variable('g', [n_state], initializer=tf.constant_initializer(1))
         b = tf.get_variable('b', [n_state], initializer=tf.constant_initializer(0))
         u = tf.reduce_mean(x, axis=axis, keepdims=True)
@@ -91,7 +94,7 @@ def attn(x, scope, n_state, *, past, hparams):
     def multihead_attn(q, k, v):
         # q, k, v have shape [batch, heads, sequence, features]
         w = tf.matmul(q, k, transpose_b=True)
-        w = w * tf.rsqrt(tf.cast(v.shape[-1].value, w.dtype))
+        w = w * tf.rsqrt(tf.cast(v.shape[-1], w.dtype))
 
         w = mask_attn_weights(w)
         w = softmax(w)
@@ -114,7 +117,7 @@ def attn(x, scope, n_state, *, past, hparams):
 
 def mlp(x, scope, n_state, *, hparams):
     with tf.variable_scope(scope):
-        nx = x.shape[-1].value
+        nx = x.shape[-1]
         h = gelu(conv1d(x, 'c_fc', n_state))
         h2 = conv1d(h, 'c_proj', nx)
         return h2
@@ -122,7 +125,8 @@ def mlp(x, scope, n_state, *, hparams):
 
 def block(x, scope, *, past, hparams):
     with tf.variable_scope(scope):
-        nx = x.shape[-1].value
+        #nx = x.shape[-1].value
+        nx = x.shape[-1]
         a, present = attn(norm(x, 'ln_1'), 'attn', nx, past=past, hparams=hparams)
         x = x + a
         m = mlp(norm(x, 'ln_2'), 'mlp', nx*4, hparams=hparams)

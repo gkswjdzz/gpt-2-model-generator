@@ -5,6 +5,8 @@ import json
 import os
 import numpy as np
 import tensorflow as tf
+if tf.__version__ > '2':
+    import tensorflow.compat.v1 as tf
 
 import model, sample, encoder
 

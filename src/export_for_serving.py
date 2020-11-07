@@ -6,9 +6,18 @@ import json
 import os
 import numpy as np
 import tensorflow as tf
+if tf.__version__ > '2':
+    import tensorflow.compat.v1 as tf
+
 from tensorflow.python.saved_model.signature_def_utils_impl import predict_signature_def
 
 import model, sample
+
+class dotdict(dict):
+    """dot.notation access to dictionary attributes"""
+    __getattr__ = dict.get
+    __setattr__ = dict.__setitem__
+    __delattr__ = dict.__delitem__
 
 def export_for_serving(
     model_name='124M',
@@ -41,8 +50,10 @@ def export_for_serving(
     models_dir = os.path.expanduser(os.path.expandvars(models_dir))
 
     hparams = model.default_hparams()
+    hparams = dotdict(hparams)
     with open(os.path.join(models_dir, model_name, 'hparams.json')) as f:
-        hparams.override_from_dict(json.load(f))
+        hparams = json.load(f)
+        hparams = dotdict(hparams)
 
     if length is None:
         length = hparams.n_ctx
